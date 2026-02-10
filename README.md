@@ -77,17 +77,20 @@ systemctl --user daemon-reload
 systemctl --user restart openclaw
 ```
 
-### 3. Usage
+### 4. Verification
 
-The OpenClaw agent will automatically detect the skill and use it.
+Before running OpenClaw, you can manually verify that the skill is working correctly.
 
-**Troubleshooting / Server Setup (Robust):**
-If you are having trouble passing environment variables (e.g. special characters in cookies), use this method to read cookies from a file at runtime:
-
-1.  Save cookies to `~/.nlm/cookies.txt`.
-2.  Manually register the tool with `mcporter`:
-
+**Check Tool List:**
+This confirms the server starts and `mcporter` can communicate with it.
 ```bash
-npx -y mcporter config remove notebooklm
-npx -y mcporter config add notebooklm --stdio "bash -c 'export NOTEBOOKLM_COOKIES=\$(cat ~/.nlm/cookies.txt); notebooklm-mcp --transport stdio'"
+npx -y mcporter list notebooklm
 ```
+*Expected Output*: A list of tools starting with `notebooklm` and `29 tools ... STDIO`.
+
+**Check Authentication:**
+This confirms your cookies are valid and providing access.
+```bash
+npx -y mcporter call notebooklm.notebook_list
+```
+*Expected Output*: A JSON array of your notebooks (e.g., `[ { "id": "...", "title": "..." } ]`). If it returns `[]`, you have no notebooks but auth is working. If it errors with "Login required", check your cookies.
