@@ -84,14 +84,14 @@ Before running OpenClaw, you can manually verify that the skill is working corre
 **Check Tool List:**
 This confirms the server starts and `mcporter` can communicate with it.
 ```bash
-npx -y mcporter list notebooklm
+npx -y mcporter --config ~/.mcporter_config.json list notebooklm
 ```
 *Expected Output*: A list of tools starting with `notebooklm` and `29 tools ... STDIO`.
 
 **Check Authentication:**
 This confirms your cookies are valid and providing access.
 ```bash
-npx -y mcporter call notebooklm.notebook_list
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list
 ```
 If it errors with "Login required" or "Authentication expired":
 1.  **Refresh** the NotebookLM page in your browser.
