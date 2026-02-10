@@ -91,7 +91,7 @@ The OpenClaw agent will automatically use `mcporter` to interact with this skill
 If you want to test manually, you can use `npx` to run mcporter:
 
 ```bash
-npx -y mcporter config add notebooklm --stdio "notebooklm-mcp"
+npx -y mcporter config add notebooklm --stdio "notebooklm-mcp --transport stdio"
 npx -y mcporter list notebooklm
 ```
 
