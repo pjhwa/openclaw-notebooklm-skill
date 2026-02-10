@@ -62,12 +62,20 @@ On your server, set the `NOTEBOOKLM_COOKIES` environment variable.
 export NOTEBOOKLM_COOKIES="...paste your long cookie string here..."
 ```
 
-**Option B: Use a file (Recommended)**
-1. Paste the cookie string into a file, e.g., `~/.nlm/cookies.txt`.
-2. Add this to your shell profile (`~/.bashrc`, `~/.zshrc`) or run it:
-   ```bash
-   export NOTEBOOKLM_COOKIES=$(cat ~/.nlm/cookies.txt)
-   ```
+**Option B: Systemd Service (Robust)**
+If running via systemd, add the variable directly to your service file (`~/.config/systemd/user/openclaw.service`):
+
+```ini
+[Service]
+Environment="NOTEBOOKLM_COOKIES=...paste your long cookie string here..."
+...
+```
+
+Then reload:
+```bash
+systemctl --user daemon-reload
+systemctl --user restart openclaw
+```
 
 ### 3. Usage
 
