@@ -113,14 +113,30 @@ If it errors with "Login required" or "Authentication expired":
 3.  Update the file: `nano ~/.nlm/cookies.txt` (paste new value).
 4.  Try again.
 
-### 5. Usage Examples
+### 5. Detailed Usage Examples
 
-**List Notebooks:**
+**Notebook Management**
 ```bash
+# List notebooks
 npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list --args "{}"
+# Create
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_create --args '{"title": "Project Alpha"}'
 ```
 
-**Query Notebook:**
+**Sources**
 ```bash
-npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_query notebook_id="<UUID>" query="Summarize this"
+# Add URL
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "url", "url": "https://example.com"}'
+```
+
+**Content Generation (Studio)**
+```bash
+# Generate Audio Overview
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.studio_create --args '{"notebook_id": "UUID", "artifact_type": "audio", "confirm": true}'
+```
+
+**Deep Research**
+```bash
+# Start Research
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.research_start --args '{"query": "Quantum Computing", "mode": "deep"}'
 ```
