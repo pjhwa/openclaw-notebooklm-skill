@@ -1,147 +1,132 @@
-# OpenClaw NotebookLM Skill
+# 📓 OpenClaw NotebookLM Skill
 
-This repository contains the [OpenClaw](https://github.com/openclaw/openclaw) skill definition for [NotebookLM MCP](https://github.com/jacob-bd/notebooklm-mcp-cli).
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![MCP](https://img.shields.io/badge/MCP-Compatible-green)
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey)
 
-## Features
+> **Supercharge your AI Agent with Google's NotebookLM.**
+> Generate podcasts, perform deep research, and query your knowledge base—all from within OpenClaw.
 
-- **Manage Notebooks**: List, create, and delete notebooks.
-- **Query Sources**: Ask questions about your documents.
-- **Download Artifacts**: Generate and download Audio Overviews, FAQs, Briefing Docs, and more.
+## 🌟 Why This Skill?
 
-## Documentation
+This skill integrates the power of **Google NotebookLM** directly into your OpenClaw agent, enabling capabilities that standard LLMs cannot match:
 
-- [Architecture & Technical Details](docs/architecture.md): Deep dive into how the skill integrates with OpenClaw, including data flow and authentication mechanics.
-- [Advanced Usage Scenarios](docs/usage_scenarios.md): Practical workflows for "Deep Research", "Podcast Generation", and "RAG".
+| Feature | Description |
+| :--- | :--- |
+| 🎙️ **Audio Overviews** | Generate "Deep Dive" podcasts from any document or URL. |
+| 🧠 **Deep Research** | Autonomous web research agent that finds and summarizes 50+ sources. |
+| 📚 **RAG Engine** | Query your specific documents with grounded answers (zero hallucinations). |
+| ⚡ **MCP Native** | Built on the Model Context Protocol for seamless agent integration. |
 
-## Installation
+---
 
-### Automatic (OpenClaw)
+## 🚀 capabilities
 
-Clone this repository into your OpenClaw workspace's `skills` directory:
+- **Manage Notebooks**: Create, list, delete, and rename.
+- **Source Management**: Add URLs, PDFs (local), Drive files, and pasted text.
+- **Studio Production**: Create Audio Overviews, FAQs, Study Guides, and Briefing Docs.
+- **Note Taking**: Create and manage notes within notebooks.
+
+## 📦 Installation
+
+### 1. Auto-Install (OpenClaw)
+
+Clone this repo into your agent's skills directory. OpenClaw handles the rest.
 
 ```bash
 cd ~/.openclaw/workspace/skills
-git clone https://github.com/jooksan-park/openclaw-notebooklm-skill.git notebooklm
+git clone https://github.com/pjhwa/openclaw-notebooklm-skill.git notebooklm
 ```
-*(Replace `jooksan-park` with your GitHub username)*
 
-The OpenClaw agent will automatically detect the skill.
+### 2. Dependencies
 
-### 1. Install NotebookLM MCP
-
-This skill requires the `notebooklm-mcp-cli` Python package.
+Ensure `uv` is installed for efficient Python package management.
 
 **macOS / Linux:**
 ```bash
-# Install uv (if not present)
-brew install uv  # macOS
-curl -LsSf https://astral.sh/uv/install.sh | sh  # Linux
+# macOS
+brew install uv
 
-# Install the tool
-uv tool install notebooklm-mcp-cli
+# Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 2. Authentication
+The agent will automatically install `notebooklm-mcp-cli` when it first runs.
 
-#### Desktop / Interactive
-Run the login command and follow the browser prompts (Works on macOS & Windows):
+---
+
+## 🔑 Authentication
+
+**Robust & Secure**: We use a file-based cookie method to ensure stability in headless environments (Linux servers, Docker containers).
+
+### Step 1: Extract Cookies
+1.  Open [NotebookLM](https://notebooklm.google.com) in your desktop browser.
+2.  Open **DevTools (F12)** → **Network** tab.
+3.  Refresh the page.
+4.  Find a request to `notebooklm.google.com` (e.g., `batchExecute`).
+5.  Copy the **entire** `cookie` value from the **Request Headers**.
+
+### Step 2: Save to File
+Save this string to a file on the machine running OpenClaw.
+
 ```bash
-nlm login
+mkdir -p ~/.nlm
+nano ~/.nlm/cookies.txt
+# Paste the cookie string and save
 ```
 
-**If you see "Error: Cannot connect to Chrome" (e.g., on Linux/Headless):**
-You can import your cookies from a file manually:
-1.  Save your cookies to a file (e.g., `~/.nlm/cookies.txt`).
-2.  Run:
-    ```bash
-    nlm login --manual
-    ```
-3.  Enter the path to your cookie file when prompted.
-    *This creates a persistent profile, so you may not need the environment variable method below.*
+*(If you have `notebooklm-mcp-cli` installed locally, you can also run `nlm login --manual`)*
 
-#### Headless / Service (Linux & macOS)
-If you are running OpenClaw as a background service (systemd or launchd) or cannot use the interactive login, use the **manual cookie file method**.
+---
 
-**Step 2a: Extract Cookies**
-1. Open [NotebookLM](https://notebooklm.google.com) in your **local computer's browser** (Chrome recommended).
-2. Open Developer Tools (`F12` or right-click -> Inspect).
-3. Go to the **Network** tab.
-4. Refresh the page.
-5. Filter for "batchExecute" or find any request to `notebooklm.google.com`.
-6. Click the request and look at the **Request Headers** section.
-7. Right-click the `cookie` value and copy it.
+## 🛠️ Usage & Configuration
 
-**Step 2b: Save Cookies to File**
-1.  Create a directory for the cookies:
-    ```bash
-    mkdir -p ~/.nlm
-    ```
-2.  Create/Edit the cookie file:
-    ```bash
-    nano ~/.nlm/cookies.txt
-    ```
-3.  Paste the **entire** cookie string into the file and save (Ctrl+O, Enter, Ctrl+X).
+To enable the skill, register it with `mcporter` using the standard configuration command.
 
-### 3. Usage & Configuration
-
-To ensure OpenClaw can use the skill with proper authentication, we configure `mcporter` to read the cookie file at runtime.
-
-Run this command once to register the tool:
+**Universal Config Command (Run Once):**
 
 ```bash
-# Remove any old config
+# Clear old configs
 npx -y mcporter --config ~/.mcporter_config.json config remove notebooklm
 
-# Register with file-based auth and standard IO
-npx -y mcporter --config ~/.mcporter_config.json config add notebooklm --stdio "bash -c 'export NOTEBOOKLM_COOKIES=\$(cat ~/.nlm/cookies.txt); notebooklm-mcp --transport stdio'"
+# Register with Auth Injection
+npx -y mcporter --config ~/.mcporter_config.json config add notebooklm --stdio \
+  "bash -c 'export NOTEBOOKLM_COOKIES=\$(cat ~/.nlm/cookies.txt); notebooklm-mcp --transport stdio'"
 ```
 
-### 4. Verification
+> **Note**: We use `--config ~/.mcporter_config.json` to ensure a consistent configuration file location for both the User and the Agent.
 
-Before running OpenClaw, you can manually verify that the skill is working correctly.
+---
 
-**Check Tool List:**
-This confirms the server starts and `mcporter` can communicate with it.
+## 🧪 Verification
+
+Test your setup before unleashing the agent.
+
+**1. Check Connection**
 ```bash
 npx -y mcporter --config ~/.mcporter_config.json list notebooklm
 ```
-*Expected Output*: A list of tools starting with `notebooklm` and `29 tools ... STDIO`.
+*Expected: List of tools (`notebook_list`, `studio_create`, etc.)*
 
-**Check Authentication:**
-This confirms your cookies are valid and providing access.
+**2. Check Auth**
 ```bash
 npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list --args "{}"
 ```
-If it errors with "Login required" or "Authentication expired":
-1.  **Refresh** the NotebookLM page in your browser.
-2.  Copy the **Request Header** `cookie` value again (it must be the full string).
-3.  Update the file: `nano ~/.nlm/cookies.txt` (paste new value).
-4.  Try again.
+*Expected: JSON list of your notebooks.*
 
-### 5. Detailed Usage Examples
+---
 
-**Notebook Management**
-```bash
-# List notebooks
-npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list --args "{}"
-# Create
-npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_create --args '{"title": "Project Alpha"}'
-```
+## 📚 Documentation
 
-**Sources**
-```bash
-# Add URL
-npx -y mcporter --config ~/.mcporter_config.json call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "url", "url": "https://example.com"}'
-```
+Detailed guides for developers and power users:
 
-**Content Generation (Studio)**
-```bash
-# Generate Audio Overview
-npx -y mcporter --config ~/.mcporter_config.json call notebooklm.studio_create --args '{"notebook_id": "UUID", "artifact_type": "audio", "confirm": true}'
-```
+- [**Architecture & Internals**](docs/architecture.md): Data flow, authentication logic, and SKILL.md structure.
+- [**Advanced Scenarios**](docs/usage_scenarios.md): Workflows for "Podcast Generation", "Deep Research", and "RAG".
 
-**Deep Research**
-```bash
-# Start Research
-npx -y mcporter --config ~/.mcporter_config.json call notebooklm.research_start --args '{"query": "Quantum Computing", "mode": "deep"}'
-```
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue or pull request.
+
+## 📄 License
+
+MIT License
