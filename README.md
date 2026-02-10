@@ -22,12 +22,60 @@ git clone https://github.com/jooksan-park/openclaw-notebooklm-skill.git notebook
 
 The OpenClaw agent will automatically detect the skill.
 
-### Manual Setup (Linux/Headless)
+### 1. Install NotebookLM MCP
 
-If running on a headless server, you must set an environment variable for authentication:
+This skill requires the `notebooklm-mcp-cli` Python package. OpenClaw will attempt to install it automatically via `uv` or `pip`, but you can also install it manually:
 
-1.  Extract cookies from your local browser's Network tab (request to `notebooklm.google.com`).
-2.  Set the environment variable:
-    ```bash
-    export NOTEBOOKLM_COOKIES="Values..."
-    ```
+```bash
+# Recommended (requires uv)
+uv tool install notebooklm-mcp-cli
+
+# Or via pip
+pip install notebooklm-mcp-cli
+```
+
+### 2. Authentication
+
+#### Desktop (Interactive)
+Run the login command and follow the browser prompts:
+```bash
+nlm login
+```
+
+#### Server / Headless (Linux)
+Since you cannot open a browser on a headless server, you must provide authentication credentials manually.
+
+**Step 2a: Extract Cookies**
+1. Open [NotebookLM](https://notebooklm.google.com) in your **local computer's browser** (Chrome recommended).
+2. Open Developer Tools (`F12` or right-click -> Inspect).
+3. Go to the **Network** tab.
+4. Refresh the page.
+5. Filter for "batchExecute" or find any request to `notebooklm.google.com`.
+6. Click the request and look at the **Request Headers** section.
+7. Right-click the `cookie` value and copy it.
+
+**Step 2b: Set Environment Variable**
+On your server, set the `NOTEBOOKLM_COOKIES` environment variable.
+
+**Option A: Export in shell (Temporary)**
+```bash
+export NOTEBOOKLM_COOKIES="...paste your long cookie string here..."
+```
+
+**Option B: Use a file (Recommended)**
+1. Paste the cookie string into a file, e.g., `~/.nlm/cookies.txt`.
+2. Add this to your shell profile (`~/.bashrc`, `~/.zshrc`) or run it:
+   ```bash
+   export NOTEBOOKLM_COOKIES=$(cat ~/.nlm/cookies.txt)
+   ```
+
+### 3. Usage
+
+The OpenClaw agent will automatically detect the skill and use it.
+
+**Troubleshooting:**
+If the agent fails to communicate with the tool, you can manually register it with `mcporter` (OpenClaw's tool bridge):
+
+```bash
+npx -y mcporter config add notebooklm --stdio "notebooklm-mcp --transport stdio"
+```
