@@ -38,11 +38,21 @@ uv tool install notebooklm-mcp-cli
 
 ### 2. Authentication
 
-#### Desktop (Interactive)
+#### Desktop / Interactive
 Run the login command and follow the browser prompts (Works on macOS & Windows):
 ```bash
 nlm login
 ```
+
+**If you see "Error: Cannot connect to Chrome" (e.g., on Linux/Headless):**
+You can import your cookies from a file manually:
+1.  Save your cookies to a file (e.g., `~/.nlm/cookies.txt`).
+2.  Run:
+    ```bash
+    nlm login --manual
+    ```
+3.  Enter the path to your cookie file when prompted.
+    *This creates a persistent profile, so you may not need the environment variable method below.*
 
 #### Headless / Service (Linux & macOS)
 If you are running OpenClaw as a background service (systemd or launchd) or cannot use the interactive login, use the **manual cookie file method**.
