@@ -93,4 +93,8 @@ This confirms your cookies are valid and providing access.
 ```bash
 npx -y mcporter call notebooklm.notebook_list
 ```
-*Expected Output*: A JSON array of your notebooks (e.g., `[ { "id": "...", "title": "..." } ]`). If it returns `[]`, you have no notebooks but auth is working. If it errors with "Login required", check your cookies.
+If it errors with "Login required" or "Authentication expired":
+1.  **Refresh** the NotebookLM page in your browser.
+2.  Copy the **Request Header** `cookie` value again (it must be the full string).
+3.  Update the file: `nano ~/.nlm/cookies.txt` (paste new value).
+4.  Try again.
