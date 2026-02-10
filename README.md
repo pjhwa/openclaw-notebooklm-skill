@@ -81,9 +81,13 @@ systemctl --user restart openclaw
 
 The OpenClaw agent will automatically detect the skill and use it.
 
-**Troubleshooting:**
-If the agent fails to communicate with the tool, you can manually register it with `mcporter` (OpenClaw's tool bridge):
+**Troubleshooting / Server Setup (Robust):**
+If you are having trouble passing environment variables (e.g. special characters in cookies), use this method to read cookies from a file at runtime:
+
+1.  Save cookies to `~/.nlm/cookies.txt`.
+2.  Manually register the tool with `mcporter`:
 
 ```bash
-npx -y mcporter config add notebooklm --stdio "notebooklm-mcp --transport stdio"
+npx -y mcporter config remove notebooklm
+npx -y mcporter config add notebooklm --stdio "bash -c 'export NOTEBOOKLM_COOKIES=\$(cat ~/.nlm/cookies.txt); notebooklm-mcp --transport stdio'"
 ```
