@@ -81,20 +81,29 @@ nano ~/.nlm/cookies.txt
 
 ## 🛠️ Usage & Configuration
 
-To enable the skill, register it with `mcporter` using the standard configuration command.
+To enable the skill, register it with `mcporter` using the command appropriate for your OS.
 
-**Universal Config Command (Run Once):**
+**Linux / macOS (Bash/Zsh):**
 
 ```bash
-# Clear old configs
-npx -y mcporter --config ~/.mcporter_config.json config remove notebooklm
-
-# Register with Auth Injection
+# Register with Auth Injection (Bash)
 npx -y mcporter --config ~/.mcporter_config.json config add notebooklm --stdio \
   "bash -c 'export NOTEBOOKLM_COOKIES=\$(cat ~/.nlm/cookies.txt); notebooklm-mcp --transport stdio'"
 ```
 
-> **Note**: We use `--config ~/.mcporter_config.json` to ensure a consistent configuration file location for both the User and the Agent.
+**Windows (PowerShell):**
+
+```powershell
+# 1. Create directory
+New-Item -ItemType Directory -Force -Path "$HOME\.nlm"
+
+# 2. Save cookies (Paste your cookie string into this file)
+notepad "$HOME\.nlm\cookies.txt"
+
+# 3. Register with Auth Injection (PowerShell)
+# Note: We use a simplified command for Windows that reads the file content via PowerShell
+npx -y mcporter --config "$HOME\.mcporter_config.json" config add notebooklm --stdio "powershell -c \"`$env:NOTEBOOKLM_COOKIES = Get-Content '$HOME\.nlm\cookies.txt' -Raw; notebooklm-mcp --transport stdio\""
+```
 
 ---
 
