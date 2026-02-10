@@ -43,7 +43,7 @@ nlm login
 ```
 
 #### Server / Headless (Linux)
-Since you cannot open a browser on a headless server, you must provide authentication credentials manually.
+Since you cannot open a browser on a headless server, you must provide authentication credentials manually using a cookie file. This is the **most robust method** and avoids issues with special characters in environment variables.
 
 **Step 2a: Extract Cookies**
 1. Open [NotebookLM](https://notebooklm.google.com) in your **local computer's browser** (Chrome recommended).
@@ -54,27 +54,29 @@ Since you cannot open a browser on a headless server, you must provide authentic
 6. Click the request and look at the **Request Headers** section.
 7. Right-click the `cookie` value and copy it.
 
-**Step 2b: Set Environment Variable**
-On your server, set the `NOTEBOOKLM_COOKIES` environment variable.
+**Step 2b: Save Cookies to File**
+1.  Create a directory for the cookies:
+    ```bash
+    mkdir -p ~/.nlm
+    ```
+2.  Create/Edit the cookie file:
+    ```bash
+    nano ~/.nlm/cookies.txt
+    ```
+3.  Paste the **entire** cookie string into the file and save (Ctrl+O, Enter, Ctrl+X).
 
-**Option A: Export in shell (Temporary)**
+### 3. Usage & Configuration
+
+To ensure OpenClaw can use the skill with proper authentication, we configure `mcporter` to read the cookie file at runtime.
+
+Run this command once to register the tool:
+
 ```bash
-export NOTEBOOKLM_COOKIES="...paste your long cookie string here..."
-```
+# Remove any old config
+npx -y mcporter --config ~/.mcporter_config.json config remove notebooklm
 
-**Option B: Systemd Service (Robust)**
-If running via systemd, add the variable directly to your service file (`~/.config/systemd/user/openclaw.service`):
-
-```ini
-[Service]
-Environment="NOTEBOOKLM_COOKIES=...paste your long cookie string here..."
-...
-```
-
-Then reload:
-```bash
-systemctl --user daemon-reload
-systemctl --user restart openclaw
+# Register with file-based auth and standard IO
+npx -y mcporter --config ~/.mcporter_config.json config add notebooklm --stdio "bash -c 'export NOTEBOOKLM_COOKIES=\$(cat ~/.nlm/cookies.txt); notebooklm-mcp --transport stdio'"
 ```
 
 ### 4. Verification
