@@ -93,10 +93,22 @@ npx -y mcporter --config ~/.mcporter_config.json list notebooklm
 **Check Authentication:**
 This confirms your cookies are valid and providing access.
 ```bash
-npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list --args "{}"
 ```
 If it errors with "Login required" or "Authentication expired":
 1.  **Refresh** the NotebookLM page in your browser.
 2.  Copy the **Request Header** `cookie` value again (it must be the full string).
 3.  Update the file: `nano ~/.nlm/cookies.txt` (paste new value).
 4.  Try again.
+
+### 5. Usage Examples
+
+**List Notebooks:**
+```bash
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list --args "{}"
+```
+
+**Query Notebook:**
+```bash
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_query notebook_id="<UUID>" query="Summarize this"
+```
