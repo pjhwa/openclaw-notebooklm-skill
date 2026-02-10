@@ -85,13 +85,25 @@ For headless servers, you must manually exact cookies and set an environment var
 
 ### Usage with mcporter
 
-The OpenClaw agent will automatically use `mcporter` to interact with this skill.
+**Robust Configuration (Recommended for Linux):**
+This method reads cookies directly from a file at runtime, avoiding special character issues in environment variables.
 
-**Manual Testing (Optional):**
-If you want to test manually, you can use `npx` to run mcporter:
+1.  Save your cookies to `~/.nlm/cookies.txt`.
+2.  Configure mcporter:
 
 ```bash
-npx -y mcporter config add notebooklm --stdio "notebooklm-mcp --transport stdio"
+# Remove old config
+npx -y mcporter config remove notebooklm
+
+# Add new config with explicit stdio transport
+npx -y mcporter config add notebooklm --stdio "bash -c 'export NOTEBOOKLM_COOKIES=\$(cat ~/.nlm/cookies.txt); notebooklm-mcp --transport stdio'"
+```
+
+> **IMPORTANT**: Do NOT run the `notebooklm-mcp` server manually in a separate terminal. OpenClaw (`mcporter`) will start and stop it automatically as needed.
+
+Then verify:
+
+```bash
 npx -y mcporter list notebooklm
 ```
 
