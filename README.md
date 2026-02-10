@@ -8,6 +8,11 @@ This repository contains the [OpenClaw](https://github.com/openclaw/openclaw) sk
 - **Query Sources**: Ask questions about your documents.
 - **Download Artifacts**: Generate and download Audio Overviews, FAQs, Briefing Docs, and more.
 
+## Documentation
+
+- [Architecture & Technical Details](docs/architecture.md): Deep dive into how the skill integrates with OpenClaw, including data flow and authentication mechanics.
+- [Advanced Usage Scenarios](docs/usage_scenarios.md): Practical workflows for "Deep Research", "Podcast Generation", and "RAG".
+
 ## Installation
 
 ### Automatic (OpenClaw)
