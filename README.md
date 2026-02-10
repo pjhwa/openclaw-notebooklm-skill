@@ -24,26 +24,28 @@ The OpenClaw agent will automatically detect the skill.
 
 ### 1. Install NotebookLM MCP
 
-This skill requires the `notebooklm-mcp-cli` Python package. OpenClaw will attempt to install it automatically via `uv` or `pip`, but you can also install it manually:
+This skill requires the `notebooklm-mcp-cli` Python package.
 
+**macOS / Linux:**
 ```bash
-# Recommended (requires uv)
-uv tool install notebooklm-mcp-cli
+# Install uv (if not present)
+brew install uv  # macOS
+curl -LsSf https://astral.sh/uv/install.sh | sh  # Linux
 
-# Or via pip
-pip install notebooklm-mcp-cli
+# Install the tool
+uv tool install notebooklm-mcp-cli
 ```
 
 ### 2. Authentication
 
 #### Desktop (Interactive)
-Run the login command and follow the browser prompts:
+Run the login command and follow the browser prompts (Works on macOS & Windows):
 ```bash
 nlm login
 ```
 
-#### Server / Headless (Linux)
-Since you cannot open a browser on a headless server, you must provide authentication credentials manually using a cookie file. This is the **most robust method** and avoids issues with special characters in environment variables.
+#### Headless / Service (Linux & macOS)
+If you are running OpenClaw as a background service (systemd or launchd) or cannot use the interactive login, use the **manual cookie file method**.
 
 **Step 2a: Extract Cookies**
 1. Open [NotebookLM](https://notebooklm.google.com) in your **local computer's browser** (Chrome recommended).
