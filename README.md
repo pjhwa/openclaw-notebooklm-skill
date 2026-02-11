@@ -118,18 +118,17 @@ npx -y mcporter --config ~/.mcporter_config.json list notebooklm
 ```
 *Expected: List of tools (`notebook_list`, `studio_create`, etc.)*
 
-**2. Check Sources**
-```bash
-# Add URL (Always wait for indexing!)
-npx -y mcporter --config ~/.mcporter_config.json call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "url", "url": "https://example.com", "wait": true}'
-```
-*Expected: JSON list of your notebooks.*
-
-**3. Check Auth**
+**2. Check Auth**
 ```bash
 npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list --args "{}"
 ```
 *Expected: JSON list of your notebooks.*
+
+**3. Test Source & Polling**
+*(Advanced)*: Add a test source and verify the "Smart Polling" behavior (see `SKILL.md` for details).
+```bash
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "text", "text": "Test", "title": "Test", "wait": true}'
+```
 
 ---
 
