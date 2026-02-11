@@ -57,20 +57,19 @@ Adding sources takes time to index. **The Agent MUST verify source readiness bef
 
 **Workflow:**
 1.  Call `source_add` with `wait: true`.
-2.  **IMMEDIATELY** verify status using `notebook_get`.
-3.  Loop until all sources show `"ready": true` (or `"status": "complete"`).
-4.  Only then proceed to query.
+2.  Check the return value. It must say `"ready": true`.
+3.  If `"ready": false` (timeout), retry adding or wait blindly (status check is not possible).
+4.  Proceed to query.
 
 ```bash
-# 1. Add Source (URL)
-mcporter call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "url", "url": "https://example.com", "wait": true}'
+# 1. Add Source (URL) - REQUIRED: wait=true
+mcporter call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "url", "url": "https://example.com", "wait": true, "wait_timeout": 120}'
 
-# 2. Add Source (Text/Paste)
-mcporter call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "text", "text": "Analysis content...", "title": "My Notes", "wait": true}'
+# 2. Add Source (Text) - REQUIRED: wait=true
+mcporter call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "text", "text": "Analysis...", "title": "Note", "wait": true}'
 
-# 3. VERIFY STATUS (Mandatory Step)
-# Call this loop until sources are ready.
-mcporter call notebooklm.notebook_get --args '{"notebook_id": "UUID"}'
+# Note: notebook_get does NOT return source readiness status. 
+# You MUST rely on source_add(wait=true) returning "ready": true.
 ```
 
 **Supported Source Types**: `url` (Web/YouTube), `text` (Pasted), `file` (Local PDF/MP3/Txt), `drive` (Google Drive).
@@ -142,9 +141,8 @@ mcporter call notebooklm.note --args '{"notebook_id": "UUID", "action": "create"
 To ensure 100% success rate, the Agent MUST follow these rules:
 
 1.  **Smart Polling (No Blind Waits)**:
-    *   Never assume a task is done just because you waited X seconds.
-    *   Always check `notebook_get` (for sources), `research_status` (for research), or `studio_status` (for artifacts).
-    *   **Rule**: `while status != complete: wait(30s); check_status()`
+    *   **Source Addition**: Always use `"wait": true`. The `notebook_get` command does **not** show processing status, so you must rely on the `source_add` response.
+    *   **Studio/Research**: These *do* support polling. Use `studio_status` or `research_status` loops.
 
 2.  **Rate Limiting**:
     *   NotebookLM has rate limits. Do not poll faster than once every 10-20 seconds.

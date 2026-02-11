@@ -125,7 +125,7 @@ npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list -
 *Expected: JSON list of your notebooks.*
 
 **3. Test Source & Polling**
-*(Advanced)*: Add a test source and verify the "Smart Polling" behavior (see `SKILL.md` for details).
+*(Advanced)*: Add a test source with `wait: true`.
 ```bash
 npx -y mcporter --config ~/.mcporter_config.json call notebooklm.source_add --args '{"notebook_id": "UUID", "source_type": "text", "text": "Test", "title": "Test", "wait": true}'
 ```
