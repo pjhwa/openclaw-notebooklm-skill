@@ -74,3 +74,20 @@ mcporter call notebooklm.source_add --args '{"notebook_id": "$uuid", "source_typ
 # 2. Query
 mcporter call notebooklm.notebook_query --args '{"notebook_id": "$uuid", "query": "What is the trend in operating margin?"}'
 ```
+
+## 4. YouTube to Quiz
+
+**Goal**: Turn a YouTube video lecture into a study quiz.
+
+### Agent Workflow
+1.  **Add Video**: Agent adds YouTube URL as source.
+2.  **Generate Quiz**: Agent calls `studio_create` with `artifact_type="quiz"`.
+
+### Underlying Commands
+```bash
+# 1. Add YouTube Source
+mcporter call notebooklm.source_add --args '{"notebook_id": "$uuid", "source_type": "url", "url": "https://youtube.com/watch?v=...", "wait": true}'
+
+# 2. Generate Quiz
+mcporter call notebooklm.studio_create --args '{"notebook_id": "$uuid", "artifact_type": "quiz", "confirm": true}'
+```
