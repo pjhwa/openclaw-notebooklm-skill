@@ -20,8 +20,8 @@ This document outlines practical workflows for using the NotebookLM Skill within
 # 1. Create Notebook
 uuid=$(mcporter call notebooklm.notebook_create --args '{"title": "Quantum Podcast"}')
 
-# 2. Add Source
-mcporter call notebooklm.source_add --args '{"notebook_id": "$uuid", "source_type": "url", "url": "https://..."}'
+# 2. Add Source (Important: Wait for completion)
+mcporter call notebooklm.source_add --args '{"notebook_id": "$uuid", "source_type": "url", "url": "https://...", "wait": true, "wait_timeout": 600}'
 
 # 3. Generate Audio
 mcporter call notebooklm.studio_create --args '{"notebook_id": "$uuid", "artifact_type": "audio", "confirm": true}'
