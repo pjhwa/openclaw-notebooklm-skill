@@ -71,7 +71,10 @@ mcporter call notebooklm.research_import --args '{"notebook_id": "$uuid", "task_
 # 1. Add Local File (Wait for text extraction)
 mcporter call notebooklm.source_add --args '{"notebook_id": "$uuid", "source_type": "file", "file_path": "/path/to/report_q1.pdf", "wait": true}'
 
-# 2. Query
+# 2. Verify Source Status (Loop UNTIL "ready": true for all sources)
+mcporter call notebooklm.notebook_get --args '{"notebook_id": "$uuid"}'
+
+# 3. Query
 mcporter call notebooklm.notebook_query --args '{"notebook_id": "$uuid", "query": "What is the trend in operating margin?"}'
 ```
 
