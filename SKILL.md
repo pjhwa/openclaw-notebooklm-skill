@@ -123,7 +123,21 @@ mcporter call notebooklm.download_artifact --args '{"notebook_id": "UUID", "arti
 
 ---
 
-### 5. Note Management
+### 5. Querying the Notebook (Critical Field Info)
+
+Once all sources are added and processed, you can ask questions.
+
+```bash
+NOTEBOOK_ID="...." # Use the ID from the create/list step.
+
+# The response is in the '.answer' field of the result JSON.
+npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_query --args "{\"notebook_id\": \"$NOTEBOOK_ID\", \"query\": \"Summarize key findings.\"}"
+```
+*   **IMPORTANT**: The JSON response from this call contains the actual answer text in the `answer` field (e.g., `jq -r '.answer'`), NOT directly in `result` or `response`. Wait patiently for the output.
+
+---
+
+### 6. Note Management
 Interact with specific notes (atomic thoughts) within a notebook.
 
 ```bash
@@ -135,6 +149,38 @@ mcporter call notebooklm.note --args '{"notebook_id": "UUID", "action": "create"
 ```
 
 ---
+
+## 🏆 Proven Agent Script (Reference Implementation)
+
+Use this logic for reliable "Deep Research" tasks.
+
+```bash
+# 1. Define inputs
+NOTEBOOK_TITLE="[Agent] Research Task"
+SOURCE_URL="https://example.com/source"
+QUERY="Summarize key findings."
+
+# 2. Configure mcporter (Safe to run every time)
+npx -y mcporter --config ~/.mcporter_config.json config add notebooklm --stdio "bash -c 'export NOTEBOOKLM_COOKIES=\$(cat ~/.nlm/cookies.txt); notebooklm-mcp --transport stdio'"
+
+# 3. Find or Create Notebook
+LIST_RESPONSE=$(npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_list --args "{}")
+NOTEBOOK_ID=$(echo $LIST_RESPONSE | jq -r --arg title "$NOTEBOOK_TITLE" '.notebooks[] | select(.title == $title) | .id' | head -n 1)
+
+if [ -z "$NOTEBOOK_ID" ]; then
+    CREATE_RESPONSE=$(npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_create --args "{\"title\": \"$NOTEBOOK_TITLE\"}")
+    NOTEBOOK_ID=$(echo $CREATE_RESPONSE | jq -r '.notebook.id')
+    # IMPORTANT: Wait long enough for indexing!
+    npx -y mcporter --config ~/.mcporter_config.json call notebooklm.source_add --args "{\"notebook_id\": \"$NOTEBOOK_ID\", \"source_type\": \"url\", \"url\": \"$SOURCE_URL\", \"wait\": true, \"wait_timeout\": 600}"
+fi
+
+# 4. Query & Extract .answer field
+QUERY_RESPONSE=$(npx -y mcporter --config ~/.mcporter_config.json call notebooklm.notebook_query --args "{\"notebook_id\": \"$NOTEBOOK_ID\", \"query\": \"$QUERY\"}")
+FINAL_ANSWER=$(echo $QUERY_RESPONSE | jq -r '.answer')
+
+echo "Final Answer: $FINAL_ANSWER"
+```
+*   **IMPORTANT**: The JSON response from this call contains the actual answer text in the `answer` field (e.g., `jq -r '.answer'`), NOT directly in `result` or `response`. Wait patiently for the output.
 
 ## 🛡️ Best Practices & Failure Prevention
 
